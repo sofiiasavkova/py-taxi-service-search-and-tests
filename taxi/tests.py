@@ -8,15 +8,12 @@ from taxi.forms import CarForm
 class SearchTestCase(TestCase):
 
     def setUp(self):
-        # Створення користувача для тестування
         self.user = get_user_model().objects.create_user(
             username="testuser", password="password123"
         )
 
-        # Авторизація користувача
         self.client.login(username="testuser", password="password123")
 
-        # Створення тестових виробників, машин і водіїв
         self.manufacturer1 = Manufacturer.objects.create(
             name="Toyota", country="Japan"
         )
@@ -54,7 +51,6 @@ class SearchTestCase(TestCase):
         self.assertNotContains(response, "Honda")
 
     def test_search_car(self):
-        # Тестуємо пошук за моделлю машини
         response = self.client.get(
             reverse("taxi:car-list"), {"model": "Corolla"}
         )
@@ -63,7 +59,6 @@ class SearchTestCase(TestCase):
         self.assertNotContains(response, "Civic")
 
     def test_search_driver(self):
-        # Тестуємо пошук за іменем водія
         response = self.client.get(
             reverse("taxi:driver-list"), {"username": "John"}
         )
@@ -72,7 +67,6 @@ class SearchTestCase(TestCase):
         self.assertNotContains(response, "janesmith")
 
     def test_search_multiple_terms(self):
-        # Тестуємо пошук з кількома термінами
         response = self.client.get(
             reverse("taxi:manufacturer-list"), {"name": "Toyota Honda"}
         )
@@ -81,7 +75,6 @@ class SearchTestCase(TestCase):
         self.assertContains(response, "Honda")
 
     def test_empty_search(self):
-        # Тестуємо порожній пошук
         response = self.client.get(
             reverse("taxi:manufacturer-list"), {"name": ""}
         )
@@ -90,7 +83,6 @@ class SearchTestCase(TestCase):
         self.assertContains(response, "Honda")
 
     def test_search_not_found(self):
-        # Тестуємо пошук, коли нічого не знайдено
         response = self.client.get(
             reverse("taxi:car-list"), {"model": "Tesla"}
         )
