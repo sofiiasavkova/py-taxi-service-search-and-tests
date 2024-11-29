@@ -101,8 +101,17 @@ class TestLoginRequired(TestCase):
 
 
 class CarFormTestCase(TestCase):
+    def __init__(self, method_name: str = "runTest"):
+        super().__init__(method_name)
+        self.driver = None
+
     def setUp(self):
         manufacturer = Manufacturer.objects.create(name="Tesla", country="USA")
+        self.driver = Driver.objects.create(
+            username="test_driver",
+            password="password123",
+            license_number="LICENSE123"
+        )
         get_user_model().objects.create_user(
             username="testuser", password="password"
         )
@@ -115,7 +124,7 @@ class CarFormTestCase(TestCase):
             data={
                 "model": "Model X",
                 "manufacturer": self.car.manufacturer.id,
-                "drivers": [self.car.id]
+                "drivers": [self.driver.id]
             }
         )
         self.assertTrue(form.is_valid())
@@ -125,7 +134,7 @@ class CarFormTestCase(TestCase):
             data={
                 "model": "",
                 "manufacturer": self.car.manufacturer.id,
-                "drivers": [self.car.id]
+                "drivers": [self.driver.id]
             }
         )
         self.assertFalse(form.is_valid())
